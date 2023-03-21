@@ -1,0 +1,9 @@
+# Venv, direnv
+.venv
+.envrc
+
+# Data
+data/
+
+# Models
+models/
