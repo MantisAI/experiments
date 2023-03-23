@@ -11,7 +11,7 @@ def train(
     data_path,
     test_data_path,
     result_path: Path,
-    model_name="sentence-transformers/paraphrase-mpnet-base-v2"
+    model_name="sentence-transformers/paraphrase-mpnet-base-v2",
 ):
     data = list(srsly.read_jsonl(data_path))
     test_data = list(srsly.read_jsonl(test_data_path))
@@ -51,6 +51,7 @@ def train(
 
     result_path.parent.mkdir(parents=True, exist_ok=True)
     srsly.write_json(result_path, metrics)
+
 
 if __name__ == "__main__":
     typer.run(train)

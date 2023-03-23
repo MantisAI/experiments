@@ -18,6 +18,7 @@ MODELS_COST = {
 
 app = typer.Typer()
 
+
 def gpt(model, text, labels):
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -31,7 +32,7 @@ def gpt(model, text, labels):
             )
         except:
             print("OpenAI error.")
-            sleep_time = 2 ** retries
+            sleep_time = 2**retries
             print(f"Waiting for {sleep_time} seconds")
             time.sleep(sleep_time)
             print("Retrying...")
@@ -39,6 +40,7 @@ def gpt(model, text, labels):
             break
         retries += 1
     return response["choices"][0]["text"].strip()
+
 
 @app.command()
 def predict(
@@ -65,6 +67,7 @@ def predict(
 
         srsly.write_jsonl(pred_data_path, pred_data)
 
+
 @app.command()
 def evaluate(data_path, pred_data_path, result_path: Path, sample_size: int = 100):
     data = list(srsly.read_jsonl(data_path))
@@ -81,6 +84,7 @@ def evaluate(data_path, pred_data_path, result_path: Path, sample_size: int = 10
 
     result_path.parent.mkdir(parents=True, exist_ok=True)
     srsly.write_json(result_path, {"accuracy": accuracy})
+
 
 if __name__ == "__main__":
     app()
