@@ -1,0 +1,56 @@
+stages:
+  get_data:
+    cmd: python get_data.py ag_news --data-dir data
+    deps:
+      - get_data.py
+    outs:
+      - data/train.jsonl
+      - data/test.jsonl
+  predict_zero_shot_llm:
+    cmd: python zero_shot_llm.py predict data/test.jsonl data/zero_shot.jsonl --sample-size 100
+    deps:
+      - zero_shot_llm.py
+      - data/test.jsonl
+    outs:
+      - data/zero_shot.jsonl
+  evaluate_zero_shot_llm:
+    cmd: python zero_shot_llm.py evaluate data/test.jsonl data/zero_shot.jsonl results/zero_shot.json --sample-size 100
+    deps:
+      - zero_shot_llm.py
+      - data/zero_shot.jsonl
+    metrics:
+      - results/zero_shot.json:
+          cache: false
+  create_synthetic_data:
+    cmd: python create_synthetic_data.py World,Sports,Business,Sci/Tech data/synthetic_data.jsonl
+    deps:
+      - create_synthetic_data.py
+    outs:
+      - data/synthetic_data.jsonl
+  train_setfit_synthetic:
+    cmd: python train_setfit.py data/synthetic_data.jsonl data/test.jsonl results/synthetic_data.json
+    deps:
+      - train_setfit.py
+      - data/synthetic_data.jsonl
+      - data/test.jsonl
+    metrics:
+      - results/synthetic_data.json:
+          cache: false
+  train_setfit_label_llm:
+    cmd: python train_setfit.py data/zero_shot.jsonl data/test.jsonl results/label_llm.json
+    deps:
+      - train_setfit.py
+      - data/zero_shot.jsonl
+      - data/test.jsonl
+    metrics:
+      - results/label_llm.json:
+          cache: false
+  train_setfit:
+    cmd: python train_setfit.py data/train.jsonl data/test.jsonl results/setfit.json
+    deps:
+      - train_setfit.py
+      - data/train.jsonl
+      - data/test.jsonl
+    metrics:
+      - results/setfit.json:
+          cache: false

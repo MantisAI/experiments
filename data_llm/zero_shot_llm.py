@@ -1,3 +1,5 @@
+from pathlib import Path
+import time
 import os
 
 from sklearn.metrics import accuracy_score
@@ -21,9 +23,21 @@ def gpt(model, text, labels):
 
     prompt = f"Classify the text into one of the following labels: {', '.join(labels)}\n\nText: {text}\nLabel:"
 
-    response = openai.Completion.create(
-        model=model, prompt=prompt, temperature=0, max_tokens=7
-    )
+    retries = 0
+    while retries < 3:
+        try:
+            response = openai.Completion.create(
+                model=model, prompt=prompt, temperature=0, max_tokens=7
+            )
+        except:
+            print("OpenAI error.")
+            sleep_time = 2 ** retries
+            print(f"Waiting for {sleep_time} seconds")
+            time.sleep(sleep_time)
+            print("Retrying...")
+        else:
+            break
+        retries += 1
     return response["choices"][0]["text"].strip()
 
 @app.command()
@@ -46,11 +60,13 @@ def predict(
         for example in tqdm(data):
             pred_label = gpt(model, example["text"], labels)
             pred_data.append({"text": example["text"], "label": pred_label})
+            # OpenAI rate limit is 1 per second
+            time.sleep(1)
 
         srsly.write_jsonl(pred_data_path, pred_data)
 
 @app.command()
-def evaluate(data_path, pred_data_path, sample_size: int = 100):
+def evaluate(data_path, pred_data_path, result_path: Path, sample_size: int = 100):
     data = list(srsly.read_jsonl(data_path))
 
     if sample_size:
@@ -60,7 +76,11 @@ def evaluate(data_path, pred_data_path, sample_size: int = 100):
 
     y_true = [example["label"] for example in data]
     y_pred = [example["label"] for example in pred_data]
-    print(accuracy_score(y_true, y_pred))
+    accuracy = accuracy_score(y_true, y_pred)
+    print(accuracy)
+
+    result_path.parent.mkdir(parents=True, exist_ok=True)
+    srsly.write_json(result_path, {"accuracy": accuracy})
 
 if __name__ == "__main__":
     app()

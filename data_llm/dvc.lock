@@ -1,0 +1,101 @@
+schema: '2.0'
+stages:
+  get_data:
+    cmd: python get_data.py ag_news --data-dir data
+    deps:
+    - path: get_data.py
+      md5: 90392b78fde1b9a842ba024db3b732aa
+      size: 634
+    outs:
+    - path: data/test.jsonl
+      md5: 895066acf1f688c0b6820f88d563ffe7
+      size: 2016797
+    - path: data/train.jsonl
+      md5: e1f3d3b6c053a8f321f8f301fe8b772d
+      size: 31987315
+  predict_zero_shot_llm:
+    cmd: python zero_shot_llm.py predict data/test.jsonl data/zero_shot.jsonl --sample-size
+      100
+    deps:
+    - path: data/test.jsonl
+      md5: 895066acf1f688c0b6820f88d563ffe7
+      size: 2016797
+    - path: zero_shot_llm.py
+      md5: ec71ac1698b1dd16daedf3cb314cca4f
+      size: 2483
+    outs:
+    - path: data/zero_shot.jsonl
+      md5: 01caaa4102fc1aa8cc31ee5b7f8e7e55
+      size: 29721
+  create_synthetic_data:
+    cmd: python create_synthetic_data.py World,Sports,Business,Sci/Tech data/synthetic_data.jsonl
+    deps:
+    - path: create_synthetic_data.py
+      md5: 5efedd5a57eae0456805d08925dbefc9
+      size: 898
+    outs:
+    - path: data/synthetic_data.jsonl
+      md5: b2782d1a9d0e2ae80ef2912b8b589fcf
+      size: 3392
+  train_setfit_synthetic:
+    cmd: python train_setfit.py data/synthetic_data.jsonl data/test.jsonl results/synthetic_data.json
+    deps:
+    - path: data/synthetic_data.jsonl
+      md5: b2782d1a9d0e2ae80ef2912b8b589fcf
+      size: 3392
+    - path: data/test.jsonl
+      md5: 895066acf1f688c0b6820f88d563ffe7
+      size: 2016797
+    - path: train_setfit.py
+      md5: 31efdc15c761b16575c8ad52ad1ebc6f
+      size: 1540
+    outs:
+    - path: results/synthetic_data.json
+      md5: 74679db2a38511143113f3c64ef6cce6
+      size: 29
+  evaluate_zero_shot_llm:
+    cmd: python zero_shot_llm.py evaluate data/test.jsonl data/zero_shot.jsonl results/zero_shot.json
+      --sample-size 100
+    deps:
+    - path: data/zero_shot.jsonl
+      md5: 01caaa4102fc1aa8cc31ee5b7f8e7e55
+      size: 29721
+    - path: zero_shot_llm.py
+      md5: ec71ac1698b1dd16daedf3cb314cca4f
+      size: 2483
+    outs:
+    - path: results/zero_shot.json
+      md5: d1119f5455ea680b79afacc870a12ba0
+      size: 21
+  train_setfit:
+    cmd: python train_setfit.py data/train.jsonl data/test.jsonl results/setfit.json
+    deps:
+    - path: data/test.jsonl
+      md5: 895066acf1f688c0b6820f88d563ffe7
+      size: 2016797
+    - path: data/train.jsonl
+      md5: e1f3d3b6c053a8f321f8f301fe8b772d
+      size: 31987315
+    - path: train_setfit.py
+      md5: 31efdc15c761b16575c8ad52ad1ebc6f
+      size: 1540
+    outs:
+    - path: results/setfit.json
+      md5: b324b4217dccabb2ec50b738512d7ee3
+      size: 29
+  train_setfit_label_llm:
+    cmd: python train_setfit.py data/zero_shot.jsonl data/test.jsonl results/label_llm.json
+    deps:
+    - path: data/test.jsonl
+      md5: 895066acf1f688c0b6820f88d563ffe7
+      size: 2016797
+    - path: data/zero_shot.jsonl
+      md5: 01caaa4102fc1aa8cc31ee5b7f8e7e55
+      size: 29721
+    - path: train_setfit.py
+      md5: 31efdc15c761b16575c8ad52ad1ebc6f
+      size: 1540
+    outs:
+    - path: results/label_llm.json
+      md5: e62e532dcc2d6eb95d46cfa375f4ca87
+      size: 29

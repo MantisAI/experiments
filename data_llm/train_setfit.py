@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from sentence_transformers.losses import CosineSimilarityLoss
 from setfit import SetFitModel, SetFitTrainer, sample_dataset
 from datasets import Dataset
@@ -8,7 +10,8 @@ import typer
 def train(
     data_path,
     test_data_path,
-    model_name="sentence-transformers/paraphrase-mpnet-base-v2",
+    result_path: Path,
+    model_name="sentence-transformers/paraphrase-mpnet-base-v2"
 ):
     data = list(srsly.read_jsonl(data_path))
     test_data = list(srsly.read_jsonl(test_data_path))
@@ -46,6 +49,8 @@ def train(
     metrics = trainer.evaluate()
     print(metrics)
 
+    result_path.parent.mkdir(parents=True, exist_ok=True)
+    srsly.write_json(result_path, metrics)
 
 if __name__ == "__main__":
     typer.run(train)

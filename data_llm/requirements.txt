@@ -1,7 +1,14 @@
-datasets==2.10.1
-typer==0.7.0
-openai==0.27.2
-srsly==2.4.6
-tiktoken==0.3.2
-tqdm==4.65.0
+# ML
 setfit==0.6.0
+scikit-learn==1.2.2
+# LLM
+openai==0.27.2
+tiktoken==0.3.2
+# Data
+datasets==2.10.1
+# CLI, progress bars, IO
+typer==0.7.0
+tqdm==4.65.0
+srsly==2.4.6
+# Reproducibility
+dvc==2.51.0
