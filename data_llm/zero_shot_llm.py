@@ -1,5 +1,6 @@
 import os
 
+from sklearn.metrics import accuracy_score
 from tqdm import tqdm
 import tiktoken
 import openai
@@ -13,6 +14,7 @@ MODELS_COST = {
     "text-ada-001": 0.0004,
 }
 
+app = typer.Typer()
 
 def gpt(model, text, labels):
     openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -24,7 +26,7 @@ def gpt(model, text, labels):
     )
     return response["choices"][0]["text"].strip()
 
-
+@app.command()
 def predict(
     data_path, pred_data_path, model="text-davinci-003", sample_size: int = 100
 ):
@@ -47,6 +49,18 @@ def predict(
 
         srsly.write_jsonl(pred_data_path, pred_data)
 
+@app.command()
+def evaluate(data_path, pred_data_path, sample_size: int = 100):
+    data = list(srsly.read_jsonl(data_path))
+
+    if sample_size:
+        data = data[:sample_size]
+
+    pred_data = list(srsly.read_jsonl(pred_data_path))
+
+    y_true = [example["label"] for example in data]
+    y_pred = [example["label"] for example in pred_data]
+    print(accuracy_score(y_true, y_pred))
 
 if __name__ == "__main__":
-    typer.run(predict)
+    app()
