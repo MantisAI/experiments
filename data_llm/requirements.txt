@@ -6,6 +6,8 @@ openai==0.27.2
 tiktoken==0.3.2
 # Data
 datasets==2.10.1
+# Plots
+seaborn==0.12.2
 # CLI, progress bars, IO
 typer==0.7.0
 tqdm==4.65.0

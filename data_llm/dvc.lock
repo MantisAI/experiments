@@ -21,8 +21,8 @@ stages:
       md5: 895066acf1f688c0b6820f88d563ffe7
       size: 2016797
     - path: zero_shot_llm.py
-      md5: ec71ac1698b1dd16daedf3cb314cca4f
-      size: 2483
+      md5: 89aae261fee832009b7eb71fae84be9f
+      size: 2485
     outs:
     - path: data/zero_shot.jsonl
       md5: 01caaa4102fc1aa8cc31ee5b7f8e7e55
@@ -47,8 +47,8 @@ stages:
       md5: 895066acf1f688c0b6820f88d563ffe7
       size: 2016797
     - path: train_setfit.py
-      md5: 31efdc15c761b16575c8ad52ad1ebc6f
-      size: 1540
+      md5: e105517d01077ef02addc17f9e37dbe7
+      size: 1542
     outs:
     - path: results/synthetic_data.json
       md5: 74679db2a38511143113f3c64ef6cce6
@@ -61,8 +61,8 @@ stages:
       md5: 01caaa4102fc1aa8cc31ee5b7f8e7e55
       size: 29721
     - path: zero_shot_llm.py
-      md5: ec71ac1698b1dd16daedf3cb314cca4f
-      size: 2483
+      md5: 89aae261fee832009b7eb71fae84be9f
+      size: 2485
     outs:
     - path: results/zero_shot.json
       md5: d1119f5455ea680b79afacc870a12ba0
@@ -77,8 +77,8 @@ stages:
       md5: e1f3d3b6c053a8f321f8f301fe8b772d
       size: 31987315
     - path: train_setfit.py
-      md5: 31efdc15c761b16575c8ad52ad1ebc6f
-      size: 1540
+      md5: e105517d01077ef02addc17f9e37dbe7
+      size: 1542
     outs:
     - path: results/setfit.json
       md5: b324b4217dccabb2ec50b738512d7ee3
@@ -93,9 +93,28 @@ stages:
       md5: 01caaa4102fc1aa8cc31ee5b7f8e7e55
       size: 29721
     - path: train_setfit.py
-      md5: 31efdc15c761b16575c8ad52ad1ebc6f
-      size: 1540
+      md5: e105517d01077ef02addc17f9e37dbe7
+      size: 1542
     outs:
     - path: results/label_llm.json
       md5: e62e532dcc2d6eb95d46cfa375f4ca87
       size: 29
+  plot_results:
+    cmd: python plot_results.py results figures/ag_news.png
+    deps:
+    - path: plot_results.py
+      md5: 4c2dc11bffce0f8f6c7452c80888ef0d
+      size: 728
+    - path: results/label_llm.json
+      md5: e62e532dcc2d6eb95d46cfa375f4ca87
+      size: 29
+    - path: results/setfit.json
+      md5: b324b4217dccabb2ec50b738512d7ee3
+      size: 29
+    - path: results/synthetic_data.json
+      md5: 74679db2a38511143113f3c64ef6cce6
+      size: 29
+    outs:
+    - path: figures/ag_news.png
+      md5: 6ff036969ab63e14d66d3062baed6e61
+      size: 15617

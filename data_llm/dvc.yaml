@@ -54,3 +54,13 @@ stages:
     metrics:
       - results/setfit.json:
           cache: false
+  plot_results:
+    cmd: python plot_results.py results figures/ag_news.png
+    deps:
+      - plot_results.py
+      - results/setfit.json
+      - results/label_llm.json
+      - results/synthetic_data.json
+    outs:
+      - figures/ag_news.png:
+          cache: false
