@@ -46,6 +46,7 @@ def train(
         per_device_eval_batch_size=batch_size,
         weight_decay=weight_decay,
         report_to="wandb",
+        deepspeed="deepspeed_config.json",
     )
     trainer = Trainer(
         model=model,
