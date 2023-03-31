@@ -19,6 +19,8 @@ def train(
     test_size: float = 0.1,
     epochs: int = 3,
     max_length: int = 512,
+    deepspeed_config: str = "deepspeed_config.json",
+    local_rank: str = typer.Option("-1", "--local_rank")
 ):
     dataset = load_dataset(data_path)
     dataset = dataset.filter(lambda x: not x["text"].strip().endswith("### Response:"))
@@ -46,7 +48,8 @@ def train(
         per_device_eval_batch_size=batch_size,
         weight_decay=weight_decay,
         report_to="wandb",
-        deepspeed="deepspeed_config.json",
+        deepspeed=deepspeed_config,
+        local_rank=local_rank
     )
     trainer = Trainer(
         model=model,
