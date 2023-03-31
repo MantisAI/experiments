@@ -6,12 +6,13 @@ from transformers import (
     DataCollatorForLanguageModeling,
 )
 from datasets import load_dataset
+import typer
 
 
 def train(
     data_path="tatsu-lab/alpaca",
     model_path="alpaca-pythia-test",
-    pretrained_model="EleutherAI/pythia-2.8b",
+    pretrained_model="EleutherAI/pythia-70m",
     learning_rate: float = 2e-5,
     batch_size: int = 1,
     weight_decay: float = 0.01,
@@ -57,4 +58,4 @@ def train(
 
 
 if __name__ == "__main__":
-    train()
+    typer.run(train)
