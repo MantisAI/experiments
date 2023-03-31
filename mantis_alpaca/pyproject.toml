@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "mantis_alpaca"
+version = "0.1.0"
+description = "Fine tune LLMs using Alpaca"
+authors = ["Nick Sorros <nick@mantisnlp.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+transformers = "^4.27.4"
+torch = "^2.0.0"
+datasets = "^2.11.0"
+typer = "^0.7.0"
+pre-commit = "^3.2.1"
+accelerate = "^0.18.0"
+wandb = "^0.14.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
