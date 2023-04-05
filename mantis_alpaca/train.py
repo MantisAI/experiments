@@ -17,10 +17,10 @@ def train(
     batch_size: int = 1,
     weight_decay: float = 0.01,
     test_size: float = 0.1,
-    epochs: int = 3,
-    max_length: int = 512,
+    epochs: int = 1,
+    max_length: int = 1024,
     deepspeed_config: str = "deepspeed_config.json",
-    local_rank: str = typer.Option("-1", "--local_rank")
+    local_rank: int = typer.Option("-1", "--local_rank")
 ):
     dataset = load_dataset(data_path)
     dataset = dataset.filter(lambda x: not x["text"].strip().endswith("### Response:"))
@@ -35,14 +35,17 @@ def train(
     )
     dataset = dataset["train"].train_test_split(test_size=test_size)
 
-    model = AutoModelForCausalLM.from_pretrained(pretrained_model, device_map="auto")
+    model = AutoModelForCausalLM.from_pretrained(pretrained_model, use_cache=False)
 
     data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
 
     training_args = TrainingArguments(
+        fp16=False,
+        bf16=True,
         output_dir=model_path,
         evaluation_strategy="epoch",
         num_train_epochs=epochs,
+        gradient_checkpointing=True,
         learning_rate=learning_rate,
         per_device_train_batch_size=batch_size,
         per_device_eval_batch_size=batch_size,
