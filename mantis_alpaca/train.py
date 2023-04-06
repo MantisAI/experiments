@@ -6,7 +6,37 @@ from transformers import (
     DataCollatorForLanguageModeling,
 )
 from datasets import load_dataset
+from typing import Any, Dict, List, Tuple, Union
 import typer
+
+INSTRUCTION_END = f"### Response:\n"
+
+
+class DataCollatorForInstructionFineTuning(DataCollatorForLanguageModeling):
+
+    def torch_call(self, examples: List[Union[List[int], Any, Dict[str, Any]]]) -> Dict[str, Any]:
+        
+        batch = super().torch_call(examples)
+        instruction_end_pattern = self.tokenizer.encode(INSTRUCTION_END)
+
+        for i in range(len(examples)):
+            instruction_end_index = self.find_subarray(instruction_end_pattern, batch["labels"][i])
+            if instruction_end_index != -1:
+                # Make sure that the instruction is ignored by the pytorch loss function
+                batch["labels"][i][i, :instruction_end_index] = -100
+            else:
+                raise RuntimeError("Instruction end pattern not found in labels")
+            
+        return batch
+
+    def find_subarray(self, pattern, array):
+        pattern_length = len(pattern)
+        for i in range(len(array) - pattern_length + 1):
+            if array[i : i + pattern_length] == pattern:
+                return i
+        return -1
+            
+
 
 
 def train(
@@ -37,7 +67,11 @@ def train(
 
     model = AutoModelForCausalLM.from_pretrained(pretrained_model, use_cache=False)
 
-    data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False)
+    data_collator = DataCollatorForInstructionFineTuning(
+        tokenizer=tokenizer, 
+        mlm=False,
+        pad_to_multiple_of=8
+    )
 
     training_args = TrainingArguments(
         fp16=False,
