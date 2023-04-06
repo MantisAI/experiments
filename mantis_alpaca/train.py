@@ -46,6 +46,9 @@ def train(
     learning_rate: float = 2e-5,
     batch_size: int = 1,
     weight_decay: float = 0.01,
+    fp16: bool = False,
+    bf16: bool = True,
+    gradient_checkpointing: bool = True,
     test_size: float = 0.1,
     epochs: int = 1,
     max_length: int = 1024,
@@ -74,12 +77,12 @@ def train(
     )
 
     training_args = TrainingArguments(
-        fp16=False,
-        bf16=True,
+        fp16=fp16,
+        bf16=bf16,
         output_dir=model_path,
         evaluation_strategy="epoch",
         num_train_epochs=epochs,
-        gradient_checkpointing=True,
+        gradient_checkpointing=gradient_checkpointing,
         learning_rate=learning_rate,
         per_device_train_batch_size=batch_size,
         per_device_eval_batch_size=batch_size,
