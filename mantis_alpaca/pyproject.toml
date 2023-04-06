@@ -7,13 +7,13 @@ authors = ["Nick Sorros <nick@mantisnlp.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 transformers = "^4.27.4"
-torch = "^2.0.0"
 datasets = "^2.11.0"
 typer = "^0.7.0"
 pre-commit = "^3.2.1"
 accelerate = "^0.18.0"
 wandb = "^0.14.0"
 deepspeed = "^0.8.3"
+torch = "^2.0.0"
 
 [tool.poetry.dev-dependencies]
 
