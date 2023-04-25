@@ -1,0 +1,6 @@
+# Direnv
+.envrc
+stablelm
+
+# Wandb
+*wandb

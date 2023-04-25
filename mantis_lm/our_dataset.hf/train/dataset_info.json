@@ -1,0 +1,47 @@
+{
+  "builder_name": "json",
+  "citation": "",
+  "config_name": "databricks--databricks-dolly-15k",
+  "dataset_size": 12326170,
+  "description": "",
+  "download_checksums": {
+    "https://huggingface.co/datasets/databricks/databricks-dolly-15k/resolve/b122d1b59226377d51cb23bc16e9769e8ede491f/databricks-dolly-15k.jsonl": {
+      "num_bytes": 13216570,
+      "checksum": null
+    }
+  },
+  "download_size": 13216570,
+  "features": {
+    "input_ids": {
+      "feature": {
+        "dtype": "int32",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    },
+    "attention_mask": {
+      "feature": {
+        "dtype": "int8",
+        "_type": "Value"
+      },
+      "_type": "Sequence"
+    }
+  },
+  "homepage": "",
+  "license": "",
+  "size_in_bytes": 25542740,
+  "splits": {
+    "train": {
+      "name": "train",
+      "num_bytes": 12326170,
+      "num_examples": 15014,
+      "dataset_name": "json"
+    }
+  },
+  "version": {
+    "version_str": "0.0.0",
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+  }
+}
